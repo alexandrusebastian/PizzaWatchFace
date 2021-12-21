@@ -15,4 +15,5 @@
 -->
 <resources>
     <dimen name="settings_preview_size">180dp</dimen>
+    <dimen name="added_complication_stroke">50dp</dimen>
 </resources>

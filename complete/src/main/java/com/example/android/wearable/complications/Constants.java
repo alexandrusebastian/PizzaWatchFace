@@ -1,5 +1,7 @@
 package com.example.android.wearable.complications;
 
+import android.support.wearable.complications.ComplicationData;
+
 public class Constants {
     public static final int RIGHT_COMPLICATION_ID = 0;
     public static final int TOP_RIGHT_COMPLICATION_ID = 1;
@@ -29,5 +31,21 @@ public class Constants {
             BOTTOM_RIGHT_RANGED_COMPLICATION_ID,
             BOTTOM_LEFT_RANGED_COMPLICATION_ID,
             TOP_LEFT_RANGED_COMPLICATION_ID
+    };
+
+    public static final int[] NORMAL_COMPLICATION_TYPES = {
+            ComplicationData.TYPE_RANGED_VALUE,
+            ComplicationData.TYPE_ICON,
+            ComplicationData.TYPE_SHORT_TEXT,
+            ComplicationData.TYPE_SMALL_IMAGE
+    };
+
+    public static final int[] LARGE_COMPLICATION_TYPES = {
+            ComplicationData.TYPE_RANGED_VALUE,
+            ComplicationData.TYPE_ICON,
+            ComplicationData.TYPE_SHORT_TEXT,
+            ComplicationData.TYPE_SMALL_IMAGE,
+            ComplicationData.TYPE_LARGE_IMAGE,
+            ComplicationData.TYPE_LONG_TEXT
     };
 }

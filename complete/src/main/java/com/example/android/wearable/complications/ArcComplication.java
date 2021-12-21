@@ -144,4 +144,14 @@ public class ArcComplication {
             secondaryPaint.setColor(secondaryColor);
         }
     }
+
+    public void setHollow(boolean hollow) {
+        if(hollow) {
+            primaryPaint.setStrokeWidth(2);
+            secondaryPaint.setStrokeWidth(2);
+        } else {
+            primaryPaint.setStrokeWidth(width);
+            secondaryPaint.setStrokeWidth(width);
+        }
+    }
 }

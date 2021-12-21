@@ -28,8 +28,12 @@ import android.support.wearable.complications.ComplicationProviderInfo;
 import android.support.wearable.complications.ProviderChooserIntent;
 import android.support.wearable.complications.ProviderInfoRetriever;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Switch;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.concurrent.Executors;
 
@@ -92,6 +96,7 @@ public class ComplicationConfigActivity extends Activity implements View.OnClick
     private ImageButton mBottomLeftRangedComplication;
     private ImageButton mBottomRightRangedComplication;
     private ImageButton mCenterComplication;
+    private Switch mHollowSwitch;
 
     private Drawable mDefaultAddComplicationDrawable;
 
@@ -151,6 +156,17 @@ public class ComplicationConfigActivity extends Activity implements View.OnClick
         mCenterComplicationBackground = (ImageView) findViewById(R.id.center_complication_background);
         mCenterComplication = (ImageButton) findViewById(R.id.center_complication);
         setUpComplication(mCenterComplicationBackground, mCenterComplication);
+
+        ComplicationWatchFaceService.Engine e = ComplicationWatchFaceService.getEngine();
+        mHollowSwitch = (Switch)findViewById(R.id.hollow_switch);
+        mHollowSwitch.setChecked(e.getHollowPaints());
+        mHollowSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                ComplicationWatchFaceService.Engine e = ComplicationWatchFaceService.getEngine();
+                e.setHollowPaints(b);
+            }
+        });
 
         // Initialization of code to retrieve active complication data for the watch face.
         mProviderInfoRetriever =
@@ -276,7 +292,6 @@ public class ComplicationConfigActivity extends Activity implements View.OnClick
                             mSelectedComplicationId,
                             supportedTypes),
                     ComplicationConfigActivity.COMPLICATION_CONFIG_REQUEST_CODE);
-
         }
     }
 

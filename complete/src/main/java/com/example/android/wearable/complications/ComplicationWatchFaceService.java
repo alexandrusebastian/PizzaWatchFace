@@ -33,77 +33,7 @@ import java.util.concurrent.TimeUnit;
 public class ComplicationWatchFaceService extends CanvasWatchFaceService {
 
     private static final String TAG = "ComplicationWatchFace";
-
-    private static final int[][] COMPLICATION_SUPPORTED_TYPES = {
-        {
-            ComplicationData.TYPE_RANGED_VALUE,
-            ComplicationData.TYPE_ICON,
-            ComplicationData.TYPE_SHORT_TEXT,
-            ComplicationData.TYPE_SMALL_IMAGE
-        },
-        {
-            ComplicationData.TYPE_RANGED_VALUE,
-            ComplicationData.TYPE_ICON,
-            ComplicationData.TYPE_SHORT_TEXT,
-            ComplicationData.TYPE_SMALL_IMAGE
-        },
-        {
-            ComplicationData.TYPE_RANGED_VALUE,
-            ComplicationData.TYPE_ICON,
-            ComplicationData.TYPE_SHORT_TEXT,
-            ComplicationData.TYPE_SMALL_IMAGE
-        },
-        {
-            ComplicationData.TYPE_RANGED_VALUE,
-            ComplicationData.TYPE_ICON,
-            ComplicationData.TYPE_SHORT_TEXT,
-            ComplicationData.TYPE_SMALL_IMAGE
-        },
-        {
-            ComplicationData.TYPE_RANGED_VALUE,
-            ComplicationData.TYPE_ICON,
-            ComplicationData.TYPE_SHORT_TEXT,
-            ComplicationData.TYPE_SMALL_IMAGE
-        },
-        {
-            ComplicationData.TYPE_RANGED_VALUE,
-            ComplicationData.TYPE_ICON,
-            ComplicationData.TYPE_LARGE_IMAGE,
-            ComplicationData.TYPE_LONG_TEXT
-        },
-        {
-            ComplicationData.TYPE_RANGED_VALUE,
-            ComplicationData.TYPE_ICON,
-            ComplicationData.TYPE_SHORT_TEXT,
-            ComplicationData.TYPE_SMALL_IMAGE,
-            ComplicationData.TYPE_LARGE_IMAGE,
-            ComplicationData.TYPE_LONG_TEXT
-        },
-        {
-                ComplicationData.TYPE_RANGED_VALUE,
-                ComplicationData.TYPE_ICON,
-                ComplicationData.TYPE_SHORT_TEXT,
-                ComplicationData.TYPE_SMALL_IMAGE
-        },
-        {
-                ComplicationData.TYPE_RANGED_VALUE,
-                ComplicationData.TYPE_ICON,
-                ComplicationData.TYPE_SHORT_TEXT,
-                ComplicationData.TYPE_SMALL_IMAGE
-        },
-        {
-                ComplicationData.TYPE_RANGED_VALUE,
-                ComplicationData.TYPE_ICON,
-                ComplicationData.TYPE_SHORT_TEXT,
-                ComplicationData.TYPE_SMALL_IMAGE
-        },
-        {
-                ComplicationData.TYPE_RANGED_VALUE,
-                ComplicationData.TYPE_ICON,
-                ComplicationData.TYPE_SHORT_TEXT,
-                ComplicationData.TYPE_SMALL_IMAGE
-        }
-    };
+    private static Engine engine;
 
     // Used by {@link ComplicationConfigActivity} to retrieve all complication ids.
     static int[] getComplicationIds() {
@@ -116,30 +46,10 @@ public class ComplicationWatchFaceService extends CanvasWatchFaceService {
             ComplicationConfigActivity.ComplicationLocation complicationLocation) {
         // Add any other supported locations here.
         switch (complicationLocation) {
-            case RIGHT:
-                return COMPLICATION_SUPPORTED_TYPES[RIGHT_COMPLICATION_ID];
-            case TOP_RIGHT:
-                return COMPLICATION_SUPPORTED_TYPES[TOP_RIGHT_COMPLICATION_ID];
-            case TOP_RIGHT_RANGED:
-                return COMPLICATION_SUPPORTED_TYPES[TOP_RIGHT_RANGED_COMPLICATION_ID];
-            case TOP:
-                return COMPLICATION_SUPPORTED_TYPES[TOP_COMPLICATION_ID];
-            case TOP_LEFT:
-                return COMPLICATION_SUPPORTED_TYPES[TOP_LEFT_COMPLICATION_ID];
-            case TOP_LEFT_RANGED:
-                return COMPLICATION_SUPPORTED_TYPES[TOP_LEFT_RANGED_COMPLICATION_ID];
-            case LEFT:
-                return COMPLICATION_SUPPORTED_TYPES[LEFT_COMPLICATION_ID];
             case BOTTOM:
-                return COMPLICATION_SUPPORTED_TYPES[BOTTOM_COMPLICATION_ID];
-            case BOTTOM_RIGHT_RANGED:
-                return COMPLICATION_SUPPORTED_TYPES[BOTTOM_RIGHT_RANGED_COMPLICATION_ID];
-            case BOTTOM_LEFT_RANGED:
-                return COMPLICATION_SUPPORTED_TYPES[BOTTOM_LEFT_RANGED_COMPLICATION_ID];
-            case CENTER:
-                return COMPLICATION_SUPPORTED_TYPES[CENTER_COMPLICATION_ID];
+                return LARGE_COMPLICATION_TYPES;
             default:
-                return new int[] {};
+                return NORMAL_COMPLICATION_TYPES;
         }
     }
 
@@ -151,13 +61,19 @@ public class ComplicationWatchFaceService extends CanvasWatchFaceService {
 
     @Override
     public Engine onCreateEngine() {
-        return new Engine();
+        engine = new Engine();
+        return engine;
     }
 
-    private class Engine extends CanvasWatchFaceService.Engine {
+    public static Engine getEngine() {
+        return engine;
+    }
+
+    public class Engine extends CanvasWatchFaceService.Engine {
+
         private static final int MSG_UPDATE_TIME = 0;
         private int BOTTOM_ROW_ITEM_SIZE = 24;
-        Context context;
+        private Context context;
 
         private Calendar mCalendar;
         private boolean mRegisteredTimeZoneReceiver = false;
@@ -183,6 +99,7 @@ public class ComplicationWatchFaceService extends CanvasWatchFaceService {
         private float rangeWidthF;
         private int rangeOffset;
         private boolean mAmbient;
+        private boolean mHollowPaints;
 
         /*
          * Whether the display supports fewer bits for each color in ambient mode.
@@ -292,6 +209,28 @@ public class ComplicationWatchFaceService extends CanvasWatchFaceService {
             mBottomPaint.setAntiAlias(true);
 
             initializeComplications();
+        }
+
+        public boolean getHollowPaints() {
+            return mHollowPaints;
+        }
+
+        public void setHollowPaints(boolean hollow) {
+            mHollowPaints = hollow;
+            if(hollow) {
+                mCenterPaint.setStyle(Paint.Style.STROKE);
+                mBottomPaint.setStyle(Paint.Style.STROKE);
+                for (int i = 0; i < mRangedComplications.length; i++) {
+                    mRangedComplications[i].setHollow(true);
+                }
+            } else {
+                mCenterPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+                mBottomPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+                for (int i = 0; i < mRangedComplications.length; i++) {
+                    mRangedComplications[i].setHollow(false);
+                }
+            }
+            invalidate();
         }
 
         private void initializeComplications() {
