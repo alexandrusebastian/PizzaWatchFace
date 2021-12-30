@@ -32,8 +32,6 @@ import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Switch;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.concurrent.Executors;
 
@@ -96,7 +94,6 @@ public class ComplicationConfigActivity extends Activity implements View.OnClick
     private ImageButton mBottomLeftRangedComplication;
     private ImageButton mBottomRightRangedComplication;
     private ImageButton mCenterComplication;
-    private Switch mHollowSwitch;
 
     private Drawable mDefaultAddComplicationDrawable;
 
@@ -113,52 +110,52 @@ public class ComplicationConfigActivity extends Activity implements View.OnClick
         mWatchFaceComponentName =
                 new ComponentName(getApplicationContext(), ComplicationWatchFaceService.class);
 
-        mRightComplicationBackground = (ImageView) findViewById(R.id.right_complication_background);
-        mRightComplication = (ImageButton) findViewById(R.id.right_complication);
+        mRightComplicationBackground = findViewById(R.id.right_complication_background);
+        mRightComplication = findViewById(R.id.right_complication);
         setUpComplication(mRightComplicationBackground, mRightComplication);
 
-        mTopRightComplicationBackground = (ImageView) findViewById(R.id.top_right_complication_background);
-        mTopRightComplication = (ImageButton) findViewById(R.id.top_right_complication);
+        mTopRightComplicationBackground = findViewById(R.id.top_right_complication_background);
+        mTopRightComplication = findViewById(R.id.top_right_complication);
         setUpComplication(mTopRightComplicationBackground, mTopRightComplication);
 
-        mTopRightRangedComplicationBackground = (ImageView) findViewById(R.id.top_right_ranged_complication_background);
-        mTopRightRangedComplication = (ImageButton) findViewById(R.id.top_right_ranged_complication);
+        mTopRightRangedComplicationBackground = findViewById(R.id.top_right_ranged_complication_background);
+        mTopRightRangedComplication = findViewById(R.id.top_right_ranged_complication);
         setUpComplication(mTopRightRangedComplicationBackground, mTopRightRangedComplication);
 
-        mTopComplicationBackground = (ImageView) findViewById(R.id.top_complication_background);
-        mTopComplication = (ImageButton) findViewById(R.id.top_complication);
+        mTopComplicationBackground = findViewById(R.id.top_complication_background);
+        mTopComplication = findViewById(R.id.top_complication);
         setUpComplication(mTopComplicationBackground, mTopComplication);
 
-        mTopLeftComplicationBackground = (ImageView) findViewById(R.id.top_left_complication_background);
-        mTopLeftComplication = (ImageButton) findViewById(R.id.top_left_complication);
+        mTopLeftComplicationBackground = findViewById(R.id.top_left_complication_background);
+        mTopLeftComplication = findViewById(R.id.top_left_complication);
         setUpComplication(mTopLeftComplicationBackground, mTopLeftComplication);
 
-        mTopLeftRangedComplicationBackground = (ImageView) findViewById(R.id.top_left_ranged_complication_background);
-        mTopLeftRangedComplication = (ImageButton) findViewById(R.id.top_left_ranged_complication);
+        mTopLeftRangedComplicationBackground = findViewById(R.id.top_left_ranged_complication_background);
+        mTopLeftRangedComplication = findViewById(R.id.top_left_ranged_complication);
         setUpComplication(mTopLeftRangedComplicationBackground, mTopLeftRangedComplication);
 
-        mLeftComplicationBackground = (ImageView) findViewById(R.id.left_complication_background);
-        mLeftComplication = (ImageButton) findViewById(R.id.left_complication);
+        mLeftComplicationBackground = findViewById(R.id.left_complication_background);
+        mLeftComplication = findViewById(R.id.left_complication);
         setUpComplication(mLeftComplicationBackground, mLeftComplication);
 
-        mBottomComplicationBackground = (ImageView) findViewById(R.id.bottom_complication_background);
-        mBottomComplication = (ImageButton) findViewById(R.id.bottom_complication);
+        mBottomComplicationBackground = findViewById(R.id.bottom_complication_background);
+        mBottomComplication = findViewById(R.id.bottom_complication);
         setUpComplication(mBottomComplicationBackground, mBottomComplication);
 
-        mBottomRightRangedComplicationBackground = (ImageView) findViewById(R.id.bottom_right_ranged_complication_background);
-        mBottomRightRangedComplication = (ImageButton) findViewById(R.id.bottom_right_ranged_complication);
+        mBottomRightRangedComplicationBackground = findViewById(R.id.bottom_right_ranged_complication_background);
+        mBottomRightRangedComplication = findViewById(R.id.bottom_right_ranged_complication);
         setUpComplication(mBottomRightRangedComplicationBackground, mBottomRightRangedComplication);
 
-        mBottomLeftRangedComplicationBackground = (ImageView) findViewById(R.id.bottom_left_ranged_complication_background);
-        mBottomLeftRangedComplication = (ImageButton) findViewById(R.id.bottom_left_ranged_complication);
+        mBottomLeftRangedComplicationBackground = findViewById(R.id.bottom_left_ranged_complication_background);
+        mBottomLeftRangedComplication = findViewById(R.id.bottom_left_ranged_complication);
         setUpComplication(mBottomLeftRangedComplicationBackground, mBottomLeftRangedComplication);
 
-        mCenterComplicationBackground = (ImageView) findViewById(R.id.center_complication_background);
-        mCenterComplication = (ImageButton) findViewById(R.id.center_complication);
+        mCenterComplicationBackground = findViewById(R.id.center_complication_background);
+        mCenterComplication = findViewById(R.id.center_complication);
         setUpComplication(mCenterComplicationBackground, mCenterComplication);
 
         ComplicationWatchFaceService.Engine e = ComplicationWatchFaceService.getEngine();
-        mHollowSwitch = (Switch)findViewById(R.id.hollow_switch);
+        Switch mHollowSwitch = findViewById(R.id.hollow_switch);
         mHollowSwitch.setChecked(e.getHollowPaints());
         mHollowSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -299,10 +296,13 @@ public class ComplicationConfigActivity extends Activity implements View.OnClick
         if (complicationProviderInfo != null) {
             complication.setImageIcon(complicationProviderInfo.providerIcon);
             complicationBackground.setVisibility(View.VISIBLE);
+            complication.setScaleType(ImageView.ScaleType.CENTER);
 
         } else {
             complication.setImageDrawable(mDefaultAddComplicationDrawable);
             complicationBackground.setVisibility(View.INVISIBLE);
+            complication.setScaleType(ImageView.ScaleType.FIT_CENTER);
+
         }
     }
 

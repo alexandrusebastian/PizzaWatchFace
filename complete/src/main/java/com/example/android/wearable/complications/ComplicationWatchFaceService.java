@@ -1,5 +1,6 @@
 package com.example.android.wearable.complications;
 
+import static com.example.android.wearable.complications.ComplicationConfigActivity.ComplicationLocation.BOTTOM;
 import static com.example.android.wearable.complications.Constants.*;
 
 import android.app.PendingIntent;
@@ -45,12 +46,11 @@ public class ComplicationWatchFaceService extends CanvasWatchFaceService {
     static int[] getSupportedComplicationTypes(
             ComplicationConfigActivity.ComplicationLocation complicationLocation) {
         // Add any other supported locations here.
-        switch (complicationLocation) {
-            case BOTTOM:
-                return LARGE_COMPLICATION_TYPES;
-            default:
-                return NORMAL_COMPLICATION_TYPES;
-        }
+        if (complicationLocation== BOTTOM)
+            return LARGE_COMPLICATION_TYPES;
+        else
+            return NORMAL_COMPLICATION_TYPES;
+
     }
 
     /*
@@ -73,7 +73,6 @@ public class ComplicationWatchFaceService extends CanvasWatchFaceService {
 
         private static final int MSG_UPDATE_TIME = 0;
         private int BOTTOM_ROW_ITEM_SIZE = 24;
-        private Context context;
 
         private Calendar mCalendar;
         private boolean mRegisteredTimeZoneReceiver = false;
@@ -151,8 +150,7 @@ public class ComplicationWatchFaceService extends CanvasWatchFaceService {
                     }
                 };
 
-        private void setTextSizeForWidth(Paint paint, float desiredWidth,
-                                                String text) {
+        private void setTextSizeForWidth(Paint paint, float desiredWidth) {
 
             // Pick a reasonably large value for the test. Larger values produce
             // more accurate results, but may cause problems with hardware
@@ -163,7 +161,7 @@ public class ComplicationWatchFaceService extends CanvasWatchFaceService {
             // Get the bounds of the text, using our testTextSize.
             paint.setTextSize(testTextSize);
             Rect bounds = new Rect();
-            paint.getTextBounds(text, 0, text.length(), bounds);
+            paint.getTextBounds("22:22", 0, "22:22".length(), bounds);
 
             // Calculate the desired size as a proportion of our testTextSize.
             float desiredTextSize = testTextSize * desiredWidth / bounds.width();
@@ -175,7 +173,6 @@ public class ComplicationWatchFaceService extends CanvasWatchFaceService {
         @Override
         public void onCreate(SurfaceHolder holder) {
             super.onCreate(holder);
-            context = getApplicationContext();
 
             setWatchFaceStyle(
                     new WatchFaceStyle.Builder(ComplicationWatchFaceService.this)
@@ -220,14 +217,14 @@ public class ComplicationWatchFaceService extends CanvasWatchFaceService {
             if(hollow) {
                 mCenterPaint.setStyle(Paint.Style.STROKE);
                 mBottomPaint.setStyle(Paint.Style.STROKE);
-                for (int i = 0; i < mRangedComplications.length; i++) {
-                    mRangedComplications[i].setHollow(true);
+                for (ArcComplication mRangedComplication : mRangedComplications) {
+                    mRangedComplication.setHollow(true);
                 }
             } else {
                 mCenterPaint.setStyle(Paint.Style.FILL_AND_STROKE);
                 mBottomPaint.setStyle(Paint.Style.FILL_AND_STROKE);
-                for (int i = 0; i < mRangedComplications.length; i++) {
-                    mRangedComplications[i].setHollow(false);
+                for (ArcComplication mRangedComplication : mRangedComplications) {
+                    mRangedComplication.setHollow(false);
                 }
             }
             invalidate();
@@ -401,8 +398,8 @@ public class ComplicationWatchFaceService extends CanvasWatchFaceService {
                 complicationDrawable.setInAmbientMode(mAmbient);
             }
 
-            for (int i = 0; i < mRangedComplications.length; i++) {
-                mRangedComplications[i].setAmbientMode(mAmbient);
+            for (ArcComplication mRangedComplication : mRangedComplications) {
+                mRangedComplication.setAmbientMode(mAmbient);
             }
 
             // Check and trigger whether or not timer should be running (only in active mode).
@@ -412,6 +409,8 @@ public class ComplicationWatchFaceService extends CanvasWatchFaceService {
         @Override
         public void onSurfaceChanged(SurfaceHolder holder, int format, int width, int height) {
             super.onSurfaceChanged(holder, format, width, height);
+
+            Context context = getApplicationContext();
 
             /*
              * Find the coordinates of the center point on the screen.
@@ -431,7 +430,7 @@ public class ComplicationWatchFaceService extends CanvasWatchFaceService {
             int midpointOfScreen = width / 2;
             mCenterPaint.setTextSize(width / 8f);
 
-            setTextSizeForWidth(mCenterPaint, width/4, "22:22");
+            setTextSizeForWidth(mCenterPaint, width/4);
 
             mBottomPaint.setTextSize(sizeOfComplication / 4f);
             BOTTOM_ROW_ITEM_SIZE = sizeOfComplication / 3;
@@ -551,9 +550,9 @@ public class ComplicationWatchFaceService extends CanvasWatchFaceService {
             float offsetX = mCenterX + (float) width /4;
 
             //sinus part zeroes out
-            //xrot=cos(θ)⋅(x−cx)−sin(θ)⋅(y−cy)+cx
+            //xRot=cos(θ)⋅(x−cx)−sin(θ)⋅(y−cy)+cx
             //cosine part zeroes out
-            //yrot=sin(θ)⋅(x−cx)+cos(θ)⋅(y−cy)+cy
+            //yRot=sin(θ)⋅(x−cx)+cos(θ)⋅(y−cy)+cy
 
             l1StartX = cos22p5 * (offsetX - mCenterX) + mCenterX;
             l1StartY = -sin22p5 * ((float) width - offsetX) + mCenterY;
@@ -607,7 +606,7 @@ public class ComplicationWatchFaceService extends CanvasWatchFaceService {
             mRangedComplications[3] = topLeftRanged;
         }
 
-        private int lastMinute;
+        private int lastMinute = 0;
 
         @Override
         public void onDraw(Canvas canvas, Rect bounds) {
@@ -617,6 +616,7 @@ public class ComplicationWatchFaceService extends CanvasWatchFaceService {
             int currentMinute = mCalendar.get(Calendar.MINUTE);
 
             if(currentMinute != lastMinute) {
+                lastMinute = currentMinute;
                 drawBackground(canvas);
 
                 if (mComplicationData[CENTER_COMPLICATION_ID] != null) {

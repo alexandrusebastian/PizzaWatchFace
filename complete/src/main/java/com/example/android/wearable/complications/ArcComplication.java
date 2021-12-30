@@ -13,18 +13,18 @@ import android.support.wearable.complications.ComplicationData;
 import android.support.wearable.complications.ComplicationText;
 
 public class ArcComplication {
-    private int primaryColor;
-    private float width;
-    private int secondaryColor;
-    private Context context;
-    private RectF complicationBounds;
-    private Rect iconBounds;
-    private Paint primaryPaint;
-    private Paint secondaryPaint;
-    private Paint textPaint;
-    private Path textPath;
-    private int startAngle;
-    private int sweepAngle;
+    private final int primaryColor;
+    private final float width;
+    private final int secondaryColor;
+    private final Context context;
+    private final RectF complicationBounds;
+    private final Rect iconBounds;
+    private final Paint primaryPaint;
+    private final Paint secondaryPaint;
+    private final Paint textPaint;
+    private final Path textPath;
+    private final int startAngle;
+    private final int sweepAngle;
 
 
     public ArcComplication(Context context, RectF complicationBounds, Rect iconBounds, float width,
@@ -50,8 +50,6 @@ public class ArcComplication {
 
     private Paint createPaint(int color) {
         Paint paint = new Paint();
-
-        paint = new Paint();
         paint.setColor(color);
         paint.setStyle(Paint.Style.STROKE);
         paint.setAntiAlias(true);
