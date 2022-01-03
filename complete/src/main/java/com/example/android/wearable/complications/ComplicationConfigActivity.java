@@ -35,32 +35,9 @@ import android.widget.Switch;
 
 import java.util.concurrent.Executors;
 
-/**
- * The watch-side config activity for {@link ComplicationWatchFaceService}, which allows for setting
- * the left and right complications of watch face.
- */
 public class ComplicationConfigActivity extends Activity implements View.OnClickListener {
 
     static final int COMPLICATION_CONFIG_REQUEST_CODE = 1001;
-
-    /**
-     * Used by associated watch face ({@link ComplicationWatchFaceService}) to let this
-     * configuration Activity know which complication locations are supported, their ids, and
-     * supported complication data types.
-     */
-    public enum ComplicationLocation {
-        RIGHT,
-        TOP_RIGHT,
-        TOP,
-        TOP_LEFT,
-        LEFT,
-        BOTTOM,
-        CENTER,
-        TOP_RIGHT_RANGED,
-        BOTTOM_RIGHT_RANGED,
-        BOTTOM_LEFT_RANGED,
-        TOP_LEFT_RANGED
-    }
 
     // Selected complication id by user.
     private int mSelectedComplicationId;
@@ -156,12 +133,12 @@ public class ComplicationConfigActivity extends Activity implements View.OnClick
 
         ComplicationWatchFaceService.Engine e = ComplicationWatchFaceService.getEngine();
         Switch mHollowSwitch = findViewById(R.id.hollow_switch);
-        mHollowSwitch.setChecked(e.getHollowPaints());
+        mHollowSwitch.setChecked(e.getHollowMode());
         mHollowSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 ComplicationWatchFaceService.Engine e = ComplicationWatchFaceService.getEngine();
-                e.setHollowPaints(b);
+                e.setHollowMode(b);
             }
         });
 
@@ -176,7 +153,7 @@ public class ComplicationConfigActivity extends Activity implements View.OnClick
     // Used by {@link ComplicationConfigActivity} to retrieve id for complication locations and
     // to check if complication location is supported.
     static int getComplicationId(
-            ComplicationConfigActivity.ComplicationLocation complicationLocation) {
+            ComplicationLocation complicationLocation) {
         // Add any other supported locations here you would like to support. In our case, we are
         // only supporting a left and right complication.
         switch (complicationLocation) {
@@ -227,7 +204,7 @@ public class ComplicationConfigActivity extends Activity implements View.OnClick
 
     public void retrieveInitialComplicationsData() {
 
-        final int[] complicationIds = ComplicationWatchFaceService.getComplicationIds();
+        final int[] complicationIds = COMPLICATION_IDS;
 
         mProviderInfoRetriever.retrieveProviderInfo(
                 new ProviderInfoRetriever.OnProviderInfoReceivedCallback() {

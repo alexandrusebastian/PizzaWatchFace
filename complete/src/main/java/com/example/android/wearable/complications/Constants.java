@@ -1,6 +1,7 @@
 package com.example.android.wearable.complications;
 
 import android.support.wearable.complications.ComplicationData;
+import java.util.concurrent.TimeUnit;
 
 public class Constants {
     public static final int RIGHT_COMPLICATION_ID = 0;
@@ -48,4 +49,11 @@ public class Constants {
             ComplicationData.TYPE_LARGE_IMAGE,
             ComplicationData.TYPE_LONG_TEXT
     };
+
+    public static final float COS_22_5 = 0.924f;
+    public static final float SIN_22_5 = 0.383f;
+
+    // Update rate in milliseconds for interactive mode. We update rarely to avoid wasting battery
+    public static final long INTERACTIVE_UPDATE_RATE_MS = TimeUnit.SECONDS.toMillis(15);
+    public static final int MSG_UPDATE_TIME = 0;
 }
